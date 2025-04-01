@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="pt">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Caixa 3D com Tampa e Som</title>
+
+    <style>
+
+        body {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            height: 100vh;
+
+            margin: 0;
+
+            background-color: #f0f0f0;
+
+        }
+
+
+
+        .scene {
+
+            width: 300px;
+
+            height: 300px;
+
+            perspective: 600px;
+
+        }
+
+
+
+        .box {
+
+            width: 100%;
+
+            height: 100%;
+
+            position: relative;
+
+            transform-style: preserve-3d;
+
+            transition: transform 0.1s;
+
+        }
+
+
+
+        .box div {
+
+            position: absolute;
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+
+
+
+        /* Cores das faces da caixa */
+
+        .front  { transform: translateZ(150px); background-color: #8B4513; }
+
+        .back   { transform: rotateY(180deg) translateZ(150px); background-color: #8B4513; }
+
+        .left   { transform: rotateY(-90deg) translateZ(150px); background-color: #8B4513; }
+
+        .right  { transform: rotateY(90deg) translateZ(150px); background-color: #8B4513; }
+
+        .top    { transform: rotateX(90deg) translateZ(150px); background-color: #D2B48C; }
+
+        .bottom { transform: rotateX(-90deg) translateZ(150px); background-color: #8B4513; }
+
+
+
+        /* Tampa do topo */
+
+        .top-cover {
+
+            position: absolute;
+
+            top: 0;
+
+            height: 50%;
+
+            width: 100%;
+
+            background-color: #A0522D;
+
+            cursor: pointer;
+
+            transform-origin: top center;
+
+            transition: transform 0.5s ease;
+
+        }
+
+
+
+        /* Estilo para a tampa aberta */
+
+        .open {
+
+            transform: rotateX(-120deg);
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="scene">
+
+    <div class="box" id="box">
+
+        <div class="front"></div>
+
+        <div class="back"></div>
+
+        <div class="left"></div>
+
+        <div class="right"></div>
+
+        <div class="top">
+
+            <div class="top-cover" id="topCover"></div>
+
+        </div>
+
+        <div class="bottom"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- Tag de áudio para o som local -->
+
+<audio id="boxSound" src="MCTuto2t-do-job-grelo-da-seresta-mc-tuto-b501fb81.mp3" preload="auto"></audio>
+
+
+
+<script>
+
+    const topCover = document.getElementById('topCover');
+
+    const boxSound = document.getElementById('boxSound');
+
+    const box = document.getElementById('box');
+
+    
+
+    let isOpen = false;
+
+    let isMouseDown = false;
+
+    let startX, startY;
+
+    let currentX = 0, currentY = 0;
+
+
+
+    // Função para abrir/fechar a tampa e tocar o som
+
+    function toggleCover() {
+
+        isOpen = !isOpen;
+
+
+
+        if (isOpen) {
+
+            topCover.classList.add('open');  // Abre a tampa
+
+            boxSound.play();  // Reproduz o som quando a tampa abrir
+
+        } else {
+
+            topCover.classList.remove('open');  // Fecha a tampa
+
+        }
+
+    }
+
+
+
+    // Evento de clique para a tampa
+
+    topCover.addEventListener('click', toggleCover);
+
+
+
+    // Função para iniciar a interação com o mouse
+
+    box.addEventListener('mousedown', (e) => {
+
+        isMouseDown = true;
+
+        startX = e.clientX;
+
+        startY = e.clientY;
+
+    });
+
+
+
+    // Função para capturar o movimento do mouse e girar a caixa
+
+    window.addEventListener('mousemove', (e) => {
+
+        if (!isMouseDown) return;
+
+
+
+        const deltaX = e.clientX - startX;
+
+        const deltaY = e.clientY - startY;
+
+
+
+        currentX += deltaX * 0.5;  // Ajusta a sensibilidade do movimento no eixo X
+
+        currentY -= deltaY * 0.5;  // Ajusta a sensibilidade do movimento no eixo Y
+
+
+
+        box.style.transform = `rotateX(${currentY}deg) rotateY(${currentX}deg)`;  // Aplica o movimento 3D
+
+
+
+        startX = e.clientX;
+
+        startY = e.clientY;
+
+    });
+
+
+
+    // Função para finalizar a interação com o mouse
+
+    window.addEventListener('mouseup', () => {
+
+        isMouseDown = false;
+
+    });
+
+
+
+    // Impede que o texto seja selecionado enquanto o mouse está sendo arrastado
+
+    box.addEventListener('dragstart', (e) => e.preventDefault());
+
+</script>
+
+
+
+</body>
+
+</html>
